@@ -1,7 +1,7 @@
 ---
 title: "Hotel bookings - factors"
-author: "YOU"
-date: "`r Sys.Date()`"
+author: "Sophie Boyd"
+date: "2-1-26"
 output: 
   html_document: 
     toc: yes
@@ -24,6 +24,28 @@ First, knit the document and view the following visualization. How are the month
 **Stretch goal:** If you finish the above task before time runs out, change the y-axis label so the values are shown with dollar signs, e.g., $80 instead of 80. You will want to use a function from the **scales** package. For inspiration and help, see https://scales.r-lib.org/reference/index.html.
 
 ```{r plot, fig.width=10}
+hotels$arrival_date_month <- fct_relevel(hotels$arrival_date_month, 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December')
+
+hotels %>%
+  group_by(hotel, arrival_date_month) %>%   # group by hotel type and arrival month
+  summarise(mean_adr = mean(adr)) %>%       # calculate mean adr for each group
+  ggplot(aes(
+    x = arrival_date_month,                 # x-axis = arrival_date_month
+    y = mean_adr,                           # y-axis = mean_adr calculated above
+    group = hotel,                          # group lines by hotel type
+    color = hotel)                          # and color by hotel type
+    ) +
+  geom_line() +                             # use lines to represent data
+  theme_minimal() +                         # use a minimal theme
+  labs(x = "Arrival month",                 # customize labels
+       y = "Mean ADR (average daily rate)",
+       title = "Comparison of resort and city hotel prices across months",
+       subtitle = "Resort hotel prices soar in the summer while ciry hotel prices remain relatively constant throughout the year",
+       color = "Hotel type")
+```
+
+
+```{r plot-check, fig.width=10}
 hotels %>%
   group_by(hotel, arrival_date_month) %>%   # group by hotel type and arrival month
   summarise(mean_adr = mean(adr)) %>%       # calculate mean adr for each group
